@@ -1,6 +1,6 @@
 # urlscan.io in Go 
 
-[![Report card](https://goreportcard.com/badge/github.com/m-mizutani/urlscan-go)](https://goreportcard.com/report/github.com/m-mizutani/urlscan-go)
+[![Report card](https://goreportcard.com/badge/github.com/m-mizutani/urlscan-go)](https://goreportcard.com/report/github.com/m-mizutani/urlscan-go) &nbsp; [![Build Status](https://travis-ci.org/m-mizutani/urlscan-go.svg?branch=master)](https://travis-ci.org/m-mizutani/urlscan-go)&nbsp;[![GoDoc](https://godoc.org/github.com/m-mizutani/urlscan-go?status.svg)](https://godoc.org/github.com/m-mizutani/urlscan-go)
 
 The package provides a API client of [urlscan.io](https://urlscan.io) in Go.
 

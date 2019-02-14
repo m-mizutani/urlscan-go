@@ -12,11 +12,16 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// Logger is a logrus logger. You can replace the logger with yours or change setting if you need.
 var Logger = logrus.New()
 
 func init() {
 	Logger.SetLevel(logrus.PanicLevel)
-	Logger.SetFormatter(&logrus.JSONFormatter{})
+	Logger.SetFormatter(&logrus.TextFormatter{
+		DisableColors: false,
+		FullTimestamp: true,
+	})
+	Logger.SetReportCaller(true)
 }
 
 // String converts string variable and literal to pointer

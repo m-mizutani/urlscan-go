@@ -2,19 +2,25 @@ package urlscan
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/pkg/errors"
 )
 
+// SubmitArguments is input argument of Submit()
 type SubmitArguments struct {
-	URL         string  `json:"url"`
+	// URL is Required.
+	URL string `json:"url"`
+	// CustomAgent is optional. You can set own UserAgent as you like it.
 	CustomAgent *string `json:"customagent"`
-	Referer     *string `json:"referer"`
-	Public      *string `json:"public"`
+	// Referer is optional. You can set any Referer.
+	Referer *string `json:"referer"`
+	// Public is optional. Default is "off" that means "private". You need to set it as "on" if you want to make the result public.
+	Public *string `json:"public"`
 }
 
-type SubmitResponse struct {
+type submitResponse struct {
 	Visibility string `json:"visibility"`
 	URL        string `json:"url"`
 	Message    string `json:"message"`
@@ -24,12 +30,13 @@ type SubmitResponse struct {
 	Options    map[string]interface{}
 }
 
+// Submit sends a request of sandbox execution for specified URL.
 func (x *Client) Submit(args SubmitArguments) (Task, error) {
 	task := Task{
 		client: x,
 	}
 
-	var result SubmitResponse
+	var result submitResponse
 	code, err := x.post("scan", args, &result)
 	if err != nil {
 		return task, err
@@ -43,10 +50,25 @@ func (x *Client) Submit(args SubmitArguments) (Task, error) {
 	return task, nil
 }
 
-// -------------------------------
-// Submitted task
-// -------------------------------
+// ExampleSubmit is an example to use Submit
+func ExampleSubmit() {
+	client := NewClient("YOUR-API-KEY")
+	task, err := client.Submit(SubmitArguments{URL: "https://golang.org"})
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	err = task.Wait()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, cookie := range task.Result.Data.Cookies {
+		fmt.Printf("Cookie: %s = %s\n", cookie.Name, cookie.Value)
+	}
+}
+
+// Task is returned by Submit() and you can fetch a result of the submitted scan from the Task.
 type Task struct {
 	client *Client
 	uuid   string
@@ -63,6 +85,7 @@ func getExpWaitTime(count int) time.Duration {
 	return time.Millisecond * time.Duration(d)
 }
 
+// Wait tries to retrieve a result. If scan is not still completed, it retries up to 30 times
 func (x *Task) Wait() error {
 	maxRetry := 30
 	for i := 0; i < maxRetry; i++ {
@@ -88,6 +111,7 @@ func (x *Task) Wait() error {
 // Structures of scan result
 // -------------------------------
 
+// ScanResult of a root data structure of scan result.
 type ScanResult struct {
 	Data  ScanData  `json:"data"`
 	Lists ScanLists `json:"lists"`
@@ -97,6 +121,7 @@ type ScanResult struct {
 	Task  ScanTask  `json:"task"`
 }
 
+// ScanGeo presents GeoLocation information
 type ScanGeo struct {
 	City        string      `json:"city"`
 	Country     string      `json:"country"`
@@ -108,6 +133,7 @@ type ScanGeo struct {
 	Zip         int64       `json:"zip"`
 }
 
+// ScanData presents main result of the scan
 type ScanData struct {
 	Console []interface{} `json:"console"`
 
@@ -270,6 +296,7 @@ type ScanData struct {
 	} `json:"timing"`
 }
 
+// ScanLists shows lists
 type ScanLists struct {
 	Asns         []string `json:"asns"`
 	Certificates []struct {
@@ -287,6 +314,7 @@ type ScanLists struct {
 	Urls        []string      `json:"urls"`
 }
 
+// ScanMeta presents scan meta data
 type ScanMeta struct {
 	Processors struct {
 		Abp struct {
@@ -362,6 +390,7 @@ type ScanMeta struct {
 	} `json:"processors"`
 }
 
+// ScanPage shows page information
 type ScanPage struct {
 	Asn     string `json:"asn"`
 	Asnname string `json:"asnname"`
@@ -374,6 +403,7 @@ type ScanPage struct {
 	URL     string `json:"url"`
 }
 
+// ScanTask presents submitted task of scan
 type ScanTask struct {
 	DomURL  string `json:"domURL"`
 	Method  string `json:"method"`
@@ -390,6 +420,7 @@ type ScanTask struct {
 	Visibility    string `json:"visibility"`
 }
 
+// ScanStatsDetail is a detail of scan
 type ScanStatsDetail struct {
 	Compression   string      `json:"compression"`
 	Count         int64       `json:"count"`
@@ -415,6 +446,7 @@ type ScanStatsDetail struct {
 	} `json:"subDomains"`
 }
 
+// ScanStats is a like summary of scan.
 type ScanStats struct {
 	IPv6Percentage int64             `json:"IPv6Percentage"`
 	AdBlocked      int64             `json:"adBlocked"`

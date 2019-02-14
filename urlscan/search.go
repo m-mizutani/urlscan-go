@@ -2,18 +2,26 @@ package urlscan
 
 import (
 	"fmt"
+	"log"
 	"net/url"
 
 	"github.com/pkg/errors"
 )
 
+// SearchArguments is input data structure of Search()
 type SearchArguments struct {
-	Query  *string `json:"query"`
-	Size   *uint64 `json:"size"`
+	// Optional. urlscan.io search query.
+	// See Help & Example of https://urlscan.io/search/ for more detail
+	Query *string `json:"query"`
+	// Optional. Page size
+	Size *uint64 `json:"size"`
+	// Optional. Offset of the result
 	Offset *uint64 `json:"offset"`
-	Sort   *string `json:"sort"`
+	// Optional. specificied via $sort_field:$sort_order. Default: _score
+	Sort *string `json:"sort"`
 }
 
+// SearchResponse is returned by Search() and including existing scan results.
 type SearchResponse struct {
 	Results []struct {
 		ID   string `json:"_id"`
@@ -48,6 +56,7 @@ type SearchResponse struct {
 	Total int64 `json:"total"`
 }
 
+// Search sends query to search existing scan results with query
 func (x *Client) Search(args SearchArguments) (SearchResponse, error) {
 	var result SearchResponse
 	values := make(url.Values)
@@ -74,4 +83,23 @@ func (x *Client) Search(args SearchArguments) (SearchResponse, error) {
 	}
 
 	return result, err
+}
+
+// ExampleSearch is an example to use Search()
+func ExampleSearch() {
+	client := NewClient("YOUR-API-KEY")
+
+	resp, err := client.Search(SearchArguments{
+		Query:  String("ip:1.2.3.x"),
+		Size:   Uint64(1),
+		Offset: Uint64(0),
+	})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, result := range resp.Results {
+		fmt.Printf("Related URL: %s\n", result.Page.URL)
+	}
 }

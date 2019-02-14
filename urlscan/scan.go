@@ -2,7 +2,6 @@ package urlscan
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/pkg/errors"
@@ -48,24 +47,6 @@ func (x *Client) Submit(args SubmitArguments) (Task, error) {
 	task.url = result.API
 	task.uuid = result.UUID
 	return task, nil
-}
-
-// ExampleSubmit is an example to use Submit
-func ExampleSubmit() {
-	client := NewClient("YOUR-API-KEY")
-	task, err := client.Submit(SubmitArguments{URL: "https://golang.org"})
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = task.Wait()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for _, cookie := range task.Result.Data.Cookies {
-		fmt.Printf("Cookie: %s = %s\n", cookie.Name, cookie.Value)
-	}
 }
 
 // Task is returned by Submit() and you can fetch a result of the submitted scan from the Task.

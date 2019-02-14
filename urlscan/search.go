@@ -2,7 +2,6 @@ package urlscan
 
 import (
 	"fmt"
-	"log"
 	"net/url"
 
 	"github.com/pkg/errors"
@@ -83,23 +82,4 @@ func (x *Client) Search(args SearchArguments) (SearchResponse, error) {
 	}
 
 	return result, err
-}
-
-// ExampleSearch is an example to use Search()
-func ExampleSearch() {
-	client := NewClient("YOUR-API-KEY")
-
-	resp, err := client.Search(SearchArguments{
-		Query:  String("ip:1.2.3.x"),
-		Size:   Uint64(1),
-		Offset: Uint64(0),
-	})
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for _, result := range resp.Results {
-		fmt.Printf("Related URL: %s\n", result.Page.URL)
-	}
 }

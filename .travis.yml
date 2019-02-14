@@ -1,0 +1,11 @@
+language: go
+go:
+- 1.11.x
+env:
+  matrix:
+  - GO111MODULE=on
+install:
+- go get
+script:
+- go build ./urlscan
+sudo: false

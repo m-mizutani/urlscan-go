@@ -1,5 +1,7 @@
 # urlscan.io in Go
 
+[![Report card](https://goreportcard.com/report/github.com/m-mizutani/urlscan-go)](https://goreportcard.com/badge/github.com/m-mizutani/urlscan-go)
+
 The package provides a API client of [urlscan.io](https://urlscan.io) in Go.
 
 ```go

@@ -20,39 +20,42 @@ type SearchArguments struct {
 	Sort *string `json:"sort"`
 }
 
+// SearchResult represents a single search result from the API
+type SearchResult struct {
+	ID   string `json:"_id"`
+	Page struct {
+		Asn     string `json:"asn"`
+		Asnname string `json:"asnname"`
+		City    string `json:"city"`
+		Country string `json:"country"`
+		Domain  string `json:"domain"`
+		IP      string `json:"ip"`
+		Ptr     string `json:"ptr"`
+		Server  string `json:"server"`
+		URL     string `json:"url"`
+	} `json:"page"`
+	Result string `json:"result"`
+	Stats  struct {
+		ConsoleMsgs       int64 `json:"consoleMsgs"`
+		DataLength        int64 `json:"dataLength"`
+		EncodedDataLength int64 `json:"encodedDataLength"`
+		Requests          int64 `json:"requests"`
+		UniqIPs           int64 `json:"uniqIPs"`
+	} `json:"stats"`
+	Task struct {
+		Method     string `json:"method"`
+		Source     string `json:"source"`
+		Time       string `json:"time"`
+		URL        string `json:"url"`
+		Visibility string `json:"visibility"`
+	} `json:"task"`
+	UniqCountries int64 `json:"uniq_countries"`
+}
+
 // SearchResponse is returned by Search() and including existing scan results.
 type SearchResponse struct {
-	Results []struct {
-		ID   string `json:"_id"`
-		Page struct {
-			Asn     string `json:"asn"`
-			Asnname string `json:"asnname"`
-			City    string `json:"city"`
-			Country string `json:"country"`
-			Domain  string `json:"domain"`
-			IP      string `json:"ip"`
-			Ptr     string `json:"ptr"`
-			Server  string `json:"server"`
-			URL     string `json:"url"`
-		} `json:"page"`
-		Result string `json:"result"`
-		Stats  struct {
-			ConsoleMsgs       int64 `json:"consoleMsgs"`
-			DataLength        int64 `json:"dataLength"`
-			EncodedDataLength int64 `json:"encodedDataLength"`
-			Requests          int64 `json:"requests"`
-			UniqIPs           int64 `json:"uniqIPs"`
-		} `json:"stats"`
-		Task struct {
-			Method     string `json:"method"`
-			Source     string `json:"source"`
-			Time       string `json:"time"`
-			URL        string `json:"url"`
-			Visibility string `json:"visibility"`
-		} `json:"task"`
-		UniqCountries int64 `json:"uniq_countries"`
-	} `json:"results"`
-	Total int64 `json:"total"`
+	Results []SearchResult `json:"results"`
+	Total   int64          `json:"total"`
 }
 
 // Search sends query to search existing scan results with query

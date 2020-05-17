@@ -76,11 +76,11 @@ func (x Client) post(apiName string, input interface{}, output interface{}) (int
 		return resp.StatusCode, errors.Wrap(err, "Fail to send urlscan.io POST request")
 	}
 
+	defer resp.Body.Close()
 	buf, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return resp.StatusCode, errors.Wrap(err, "Fail to read urlscan.io POST result")
 	}
-
 	if resp.StatusCode != 200 {
 		Logger.WithFields(logrus.Fields{
 			"body": string(buf),
@@ -115,7 +115,7 @@ func (x Client) get(apiName string, values url.Values, output interface{}) (int,
 	if err != nil {
 		return resp.StatusCode, errors.Wrap(err, "Fail to send urlscan.io get request")
 	}
-
+	defer resp.Body.Close()
 	buf, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return resp.StatusCode, errors.Wrap(err, "Fail to read urlscan.io get result")

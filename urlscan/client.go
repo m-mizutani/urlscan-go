@@ -2,6 +2,7 @@ package urlscan
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -50,7 +51,7 @@ func NewClient(apiKey string) Client {
 	return client
 }
 
-func (x Client) post(apiName string, input interface{}, output interface{}) (int, error) {
+func (x Client) post(ctx context.Context, apiName string, input interface{}, output interface{}) (int, error) {
 	rawData, err := json.Marshal(input)
 	if err != nil {
 		return 0, errors.Wrap(err, "Fail to marshal urlscan.io submit argument")
@@ -63,7 +64,7 @@ func (x Client) post(apiName string, input interface{}, output interface{}) (int
 	}).Debug("Generated Query")
 
 	client := &http.Client{}
-	req, err := http.NewRequest("POST", uri, bytes.NewReader(rawData))
+	req, err := http.NewRequestWithContext(ctx, "POST", uri, bytes.NewReader(rawData))
 	if err != nil {
 		return 0, errors.Wrap(err, "Fail to create urlscan.io scan POST request")
 	}
@@ -96,7 +97,7 @@ func (x Client) post(apiName string, input interface{}, output interface{}) (int
 	return resp.StatusCode, nil
 }
 
-func (x Client) get(apiName string, values url.Values, output interface{}) (int, error) {
+func (x Client) get(ctx context.Context, apiName string, values url.Values, output interface{}) (int, error) {
 	var qs string
 	if values != nil {
 		qs = "?" + values.Encode()
@@ -106,7 +107,7 @@ func (x Client) get(apiName string, values url.Values, output interface{}) (int,
 	Logger.WithField("uri", uri).Info("Generated Query")
 
 	client := &http.Client{}
-	req, err := http.NewRequest("GET", uri, nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", uri, nil)
 	if err != nil {
 		return 0, errors.Wrap(err, "Fail to create urlscan.io get request")
 	}

@@ -68,7 +68,7 @@ func getExpWaitTime(count int) time.Duration {
 }
 
 // Wait tries to retrieve a result. If scan is not still completed, it retries up to 30 times
-func (x *Task) Wait(ctx context.Context) error {
+func (x *Task) WaitForReport(ctx context.Context) error {
 	maxRetry := 30
 	for i := 0; i < maxRetry; i++ {
 		code, err := x.client.get(ctx, fmt.Sprintf("result/%s", x.uuid), nil, &x.Result)

@@ -1,6 +1,7 @@
 package urlscan_test
 
 import (
+	"context"
 	"log"
 	"os"
 	"testing"
@@ -28,11 +29,11 @@ func init() {
 
 func TestSubmitScan(t *testing.T) {
 	client := urlscan.NewClient(cfg.ApiKey)
-	task, err := client.Submit(urlscan.SubmitArguments{
+	task, err := client.Submit(context.Background(), urlscan.SubmitArguments{
 		URL: "https://cookpad.com",
 	})
 
 	require.NoError(t, err)
-	err = task.Wait()
+	err = task.WaitForReport(context.Background())
 	require.NoError(t, err)
 }

@@ -74,6 +74,9 @@ func (x Client) post(ctx context.Context, apiName string, input interface{}, out
 
 	resp, err := client.Do(req)
 	if err != nil {
+		if resp == nil {
+			return -1, errors.Wrap(err, "Fail to send urlscan.io POST request")
+		}
 		return resp.StatusCode, errors.Wrap(err, "Fail to send urlscan.io POST request")
 	}
 
@@ -114,6 +117,9 @@ func (x Client) get(ctx context.Context, apiName string, values url.Values, outp
 
 	resp, err := client.Do(req)
 	if err != nil {
+		if resp == nil {
+			return -1, errors.Wrap(err, "Fail to send urlscan.io POST request")
+		}
 		return resp.StatusCode, errors.Wrap(err, "Fail to send urlscan.io get request")
 	}
 	defer resp.Body.Close()

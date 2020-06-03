@@ -1,6 +1,7 @@
 package urlscan
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -30,13 +31,13 @@ type submitResponse struct {
 }
 
 // Submit sends a request of sandbox execution for specified URL.
-func (x *Client) Submit(args SubmitArguments) (Task, error) {
+func (x *Client) Submit(ctx context.Context, args SubmitArguments) (Task, error) {
 	task := Task{
 		client: x,
 	}
 
 	var result submitResponse
-	code, err := x.post("scan", args, &result)
+	code, err := x.post(ctx, "scan", args, &result)
 	if err != nil {
 		return task, err
 	}
@@ -67,10 +68,10 @@ func getExpWaitTime(count int) time.Duration {
 }
 
 // Wait tries to retrieve a result. If scan is not still completed, it retries up to 30 times
-func (x *Task) Wait() error {
+func (x *Task) WaitForReport(ctx context.Context) error {
 	maxRetry := 30
 	for i := 0; i < maxRetry; i++ {
-		code, err := x.client.get(fmt.Sprintf("result/%s", x.uuid), nil, &x.Result)
+		code, err := x.client.get(ctx, fmt.Sprintf("result/%s", x.uuid), nil, &x.Result)
 		if err != nil {
 			return errors.Wrap(err, "Fail to get result query")
 		}

@@ -1,6 +1,7 @@
 package urlscan
 
 import (
+	"context"
 	"fmt"
 	"net/url"
 
@@ -59,7 +60,7 @@ type SearchResponse struct {
 }
 
 // Search sends query to search existing scan results with query
-func (x *Client) Search(args SearchArguments) (SearchResponse, error) {
+func (x *Client) Search(ctx context.Context, args SearchArguments) (SearchResponse, error) {
 	var result SearchResponse
 	values := make(url.Values)
 
@@ -76,7 +77,7 @@ func (x *Client) Search(args SearchArguments) (SearchResponse, error) {
 		values.Add("sort", *args.Sort)
 	}
 
-	code, err := x.get("search", values, &result)
+	code, err := x.get(ctx, "search", values, &result)
 	if err != nil {
 		return result, err
 	}

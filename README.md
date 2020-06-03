@@ -19,7 +19,7 @@ func main() {
         log.Fatal(err)
     }
 
-    err = task.Wait()
+    err = task.WaitForReport(context.Background())
     if err != nil {
         log.Fatal(err)
     }

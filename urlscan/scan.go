@@ -365,7 +365,7 @@ type ScanMeta struct {
 				App        string `json:"app"`
 				Categories []struct {
 					Name     string `json:"name"`
-					Priority string `json:"priority"`
+					Priority int64  `json:"priority"`
 				} `json:"categories"`
 				Confidence []struct {
 					Confidence interface{} `json:"confidence"`

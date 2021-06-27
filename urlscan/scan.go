@@ -49,6 +49,15 @@ func (x *Client) Submit(args SubmitArguments) (Task, error) {
 	return task, nil
 }
 
+// ResultTask initiates a task from a previous scan result (uuid) for easy lookup and use.
+func (x *Client) ResultTask(uuid string) Task {
+	task := Task{
+		client: x,
+		uuid:   uuid,
+	}
+	return task
+}
+
 // Task is returned by Submit() and you can fetch a result of the submitted scan from the Task.
 type Task struct {
 	client *Client

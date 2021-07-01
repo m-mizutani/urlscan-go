@@ -75,10 +75,20 @@ func getExpWaitTime(count int) time.Duration {
 	return time.Millisecond * time.Duration(d)
 }
 
-// Wait tries to retrieve a result. If scan is not still completed, it retries up to 30 times
+// Wait tries to retrieve a result, with a default of 30 retries
 func (x *Task) Wait() error {
-	maxRetry := 30
+	return x.WaitWithRetry(30)
+}
+
+// WaitWithRetry tries to retrieve a result. If scan is not still completed, it retries up to maxRetry times
+func (x *Task) WaitWithRetry(maxRetry int) error {
 	for i := 0; i < maxRetry; i++ {
+
+		// Only sleep on retries, not the first time
+		if i > 0 {
+			time.Sleep(getExpWaitTime(i))
+		}
+
 		code, err := x.client.get(fmt.Sprintf("result/%s", x.uuid), nil, &x.Result)
 		if err != nil {
 			return errors.Wrap(err, "Fail to get result query")
@@ -90,11 +100,21 @@ func (x *Task) Wait() error {
 		case 400:
 			return errors.New("status: 400")
 		}
-
-		time.Sleep(getExpWaitTime(i))
 	}
 
 	return errors.Errorf("Timeout of task id: %s", x.uuid)
+}
+
+// Get tries exactly once to retrieve a result, with no retries
+func (x *Task) Get() error {
+	code, err := x.client.get(fmt.Sprintf("result/%s", x.uuid), nil, &x.Result)
+	if err != nil {
+		return errors.Wrap(err, "Fail to get result query")
+	}
+	if code == 200 {
+		return nil
+	}
+	return errors.New(fmt.Sprintf("status: %d", code))
 }
 
 // -------------------------------

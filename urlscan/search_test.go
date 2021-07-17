@@ -31,27 +31,3 @@ func TestSearchSize(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, 1, len(resp.Results))
 }
-
-func TestSearchOffset(t *testing.T) {
-	client := urlscan.NewClient(cfg.ApiKey)
-
-	resp1, err := client.Search(urlscan.SearchArguments{
-		Query:  urlscan.String("ip:163.43.24.70"),
-		Size:   urlscan.Uint64(1),
-		Offset: urlscan.Uint64(0),
-	})
-
-	require.NoError(t, err)
-	assert.Equal(t, 1, len(resp1.Results))
-
-	resp2, err := client.Search(urlscan.SearchArguments{
-		Query:  urlscan.String("ip:163.43.24.70"),
-		Size:   urlscan.Uint64(1),
-		Offset: urlscan.Uint64(1),
-	})
-
-	require.NoError(t, err)
-	assert.Equal(t, 1, len(resp2.Results))
-
-	assert.NotEqual(t, resp1.Results[0].ID, resp2.Results[0].ID)
-}

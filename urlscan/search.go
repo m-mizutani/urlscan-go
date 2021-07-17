@@ -14,8 +14,6 @@ type SearchArguments struct {
 	Query *string `json:"query"`
 	// Optional. Page size
 	Size *uint64 `json:"size"`
-	// Optional. Offset of the result
-	Offset *uint64 `json:"offset"`
 	// Optional. specificied via $sort_field:$sort_order. Default: _score
 	Sort *string `json:"sort"`
 }
@@ -68,9 +66,6 @@ func (x *Client) Search(args SearchArguments) (SearchResponse, error) {
 	}
 	if args.Size != nil {
 		values.Add("size", fmt.Sprintf("%d", *args.Size))
-	}
-	if args.Offset != nil {
-		values.Add("offset", fmt.Sprintf("%d", *args.Offset))
 	}
 	if args.Sort != nil {
 		values.Add("sort", *args.Sort)

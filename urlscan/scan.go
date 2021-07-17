@@ -111,10 +111,11 @@ func (x *Task) Get() error {
 	if err != nil {
 		return errors.Wrap(err, "Fail to get result query")
 	}
-	if code == 200 {
-		return nil
+	if code != 200 {
+		return fmt.Errorf("status: %d", code)
 	}
-	return errors.New(fmt.Sprintf("status: %d", code))
+
+	return nil
 }
 
 // -------------------------------
